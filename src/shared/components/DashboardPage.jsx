@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-
-import { Link } from 'react-router-dom';
-
+import React, { useState, useEffect } from 'react';
+import StudentLayout from './StudentLayout';
 
 const DashboardPage = () => {
   const [userName, setUserName] = useState('Scholar');
+  const [isTasksExpanded, setIsTasksExpanded] = useState(false);
 
   useEffect(() => {
     const savedName = localStorage.getItem('userName');
@@ -13,65 +12,23 @@ const DashboardPage = () => {
     }
   }, []);
 
+  const allTasks = [
+    { id: 1, title: 'Review Module 4 Submissions', status: 'Due Today', color: 'text-error' },
+    { id: 2, title: 'Update Bootcamp Curriculum', status: '2 Days left', color: 'text-on-surface-variant' },
+    { id: 3, title: 'Prepare Session Slides', status: 'Upcoming', color: 'text-primary' },
+    { id: 4, title: 'Grade Lab Assessments', status: 'Pending', color: 'text-on-surface-variant' },
+    { id: 5, title: 'Sync with Mentors', status: 'Ongoing', color: 'text-secondary' },
+  ];
+
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex">
-      {/* SideNavBar */}
-      <aside className="h-screen w-64 fixed left-0 top-0 z-40 bg-surface-container-low flex flex-col py-6 shadow-[inset_-1px_0_0_0_rgba(0,0,0,0.05)]">
-        <div className="px-6 mb-12">
-          <h1 className="text-2xl font-black font-headline text-primary tracking-tighter uppercase">CSEC ASTU</h1>
-          <p className="text-[10px] font-headline font-bold tracking-[0.2em] uppercase opacity-40 mt-1">Bootcamp Portal</p>
-        </div>
-
-        <nav className="flex-1 px-4 space-y-1">
-          <Link className="flex items-center gap-3 text-primary font-bold bg-surface-container-lowest rounded-xl my-1 p-3 transition-all scale-98 active:scale-95" to="/dashboard">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>dashboard</span>
-            <span className="font-headline tracking-tight">Dashboard</span>
-          </Link>
-          <Link className="flex items-center gap-3 text-on-surface/60 hover:text-primary hover:bg-surface-container-lowest/50 my-1 p-3 transition-colors duration-200 rounded-xl" to="/my-bootcamps">
-            <span className="material-symbols-outlined">school</span>
-            <span className="font-headline tracking-tight">My Bootcamp</span>
-          </Link>
-        </nav>
-        <div className="mt-auto px-4">
-          <Link className="flex items-center gap-3 text-on-surface/60 hover:text-error hover:bg-error-container/10 my-1 p-3 transition-colors duration-200 rounded-xl" to="/">
-            <span className="material-symbols-outlined">logout</span>
-            <span className="font-headline tracking-tight">Logout</span>
-          </Link>
-        </div>
-
-      </aside>
-
-      {/* TopNavBar */}
-      <header className="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-30 bg-surface/80 backdrop-blur-md flex justify-between items-center px-8 gap-4 shadow-sm">
-        <div className="md:hidden">
-          <span className="text-2xl font-black font-headline text-primary tracking-tighter uppercase">CSEC ASTU</span>
-        </div>
-        <div className="hidden md:block">
-          <h2 className="text-lg font-bold font-headline text-primary opacity-0 pointer-events-none">CSEC ASTU</h2>
-        </div>
-        <div className="flex items-center gap-6">
-          <button className="relative p-2 text-on-surface opacity-70 hover:opacity-100 hover:bg-surface-container-highest rounded-full transition-colors active:scale-95 duration-200">
-            <span className="material-symbols-outlined text-primary">notifications</span>
-          </button>
-          <div className="w-10 h-10 rounded-full bg-surface-container overflow-hidden cursor-pointer active:opacity-70">
-            <img
-              alt="User Avatar"
-              className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHMVqIDssHIuBTPINUVO65ENox8NUZsqC75DSUxZz1-qTJXR7uiRn-EbjueaCMmOeOmCBw2iyLJsgCzyAtQniIB01DwYLn6lkYXph15jrPiTWaeb_LowT81hvTm3X9SZzH9Wwl4s-2LwrWL4MrlhXnTiWlP42UC8woG_cng7KNovuby9OZPlUkabmyB_M7bcAYnMWVnYkavKQiglPzvwVaHGrgUV_3iOzdXoRlkJPnw2SMeMlEC1EzjOwuyO5KhELC37EC0QJtiWQ"
-            />
-          </div>
-        </div>
-      </header>
-
-
-      {/* Main Content */}
-      <main className="ml-64 pt-20 p-8 flex-1 min-h-screen">
+    <StudentLayout>
+      <div className="p-8 pb-20">
         <section className="mb-10">
           <h2 className="text-[3.5rem] font-extrabold font-headline leading-tight tracking-tight text-on-surface">
             Welcome back, {userName}.
           </h2>
           <p className="text-on-surface-variant font-body text-lg mt-2 max-w-2xl">
-            Your bootcamp ecosystem is synchronized. You have 3 pending tasks and 2 upcoming sessions today.
+            Your bootcamp ecosystem is synchronized. You have {allTasks.length} pending tasks and 2 upcoming sessions today.
           </p>
         </section>
 
@@ -148,10 +105,9 @@ const DashboardPage = () => {
           </div>
 
           {/* Today's Sessions */}
-          <div className="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-xl editorial-shadow p-8">
+          <div className="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-xl editorial-shadow p-8 h-full">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-xl font-extrabold font-headline text-on-surface">Today's Sessions</h3>
-              <span className="text-primary text-sm font-bold font-label cursor-pointer hover:underline">View Calendar</span>
             </div>
             <div className="space-y-6">
               <div className="flex gap-4 items-start">
@@ -179,49 +135,58 @@ const DashboardPage = () => {
           </div>
 
           {/* Pending Tasks & Alerts */}
-          <div className="col-span-12 lg:col-span-6 grid grid-rows-2 gap-6">
-            <div className="bg-surface-container-lowest rounded-xl editorial-shadow p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold font-headline text-on-surface">Pending Tasks</h3>
-                <span className="bg-primary-container text-on-primary-container text-[0.65rem] font-bold px-2 py-0.5 rounded-full">3 New</span>
+          <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
+            <div className={`bg-surface-container-lowest rounded-xl editorial-shadow p-8 transition-all duration-500 relative z-20 ${isTasksExpanded ? 'flex-1 ring-2 ring-primary/20' : ''}`}>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-xl font-extrabold font-headline text-on-surface">Pending Tasks</h3>
+                  <span className="bg-primary-container/10 text-primary text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest">{allTasks.length} New</span>
+                </div>
+                <button
+                  onClick={() => setIsTasksExpanded(!isTasksExpanded)}
+                  className="text-primary text-xs font-black uppercase tracking-widest hover:underline flex items-center gap-1"
+                >
+                  {isTasksExpanded ? 'Shrink' : 'View All'}
+                  <span className="material-symbols-outlined text-sm">{isTasksExpanded ? 'expand_less' : 'expand_more'}</span>
+                </button>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-primary text-sm">check_box_outline_blank</span>
-                    <span className="text-sm font-medium text-on-surface">Review Module 4 Submissions</span>
+
+              <div className={`space-y-3 ${isTasksExpanded ? 'max-h-[400px] overflow-y-auto pr-2 custom-scrollbar' : ''}`}>
+                {(isTasksExpanded ? allTasks : allTasks.slice(0, 2)).map((task) => (
+                  <div key={task.id} className="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl hover:bg-surface-container-high transition-colors group">
+                    <div className="flex items-center gap-4">
+                      <span className="material-symbols-outlined text-primary text-xl group-hover:scale-110 transition-transform">check_box_outline_blank</span>
+                      <span className="text-sm font-bold text-on-surface">{task.title}</span>
+                    </div>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${task.color}`}>{task.status}</span>
                   </div>
-                  <span className="text-[0.65rem] font-bold text-error">Due Today</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-primary text-sm">check_box_outline_blank</span>
-                    <span className="text-sm font-medium text-on-surface">Update Bootcamp Curriculum</span>
-                  </div>
-                  <span className="text-[0.65rem] font-bold text-on-surface-variant">2 Days left</span>
-                </div>
+                ))}
               </div>
             </div>
 
-            <div className="bg-surface-container-lowest rounded-xl editorial-shadow p-6 overflow-hidden relative">
-              <div className="absolute top-0 right-0 p-4 opacity-5">
-                <span className="material-symbols-outlined text-8xl">warning</span>
-              </div>
-              <h3 className="text-lg font-bold font-headline text-on-surface mb-4">System Alerts</h3>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 bg-tertiary-fixed rounded-xl">
-                  <span className="material-symbols-outlined text-tertiary-fixed-dim bg-tertiary p-1 rounded-full text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>priority_high</span>
-                  <div>
-                    <h6 className="text-xs font-bold text-on-tertiary-fixed">Project Deadline Approaching</h6>
-                    <p className="text-[0.7rem] text-on-tertiary-fixed-variant leading-tight">Phase 2 project submission ends in 12 hours. Ensure all students have uploaded documents.</p>
+            {!isTasksExpanded && (
+              <div className="bg-surface-container-lowest rounded-xl editorial-shadow p-8 overflow-hidden relative group">
+                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-8xl">warning</span>
+                </div>
+                <h3 className="text-xl font-extrabold font-headline text-on-surface mb-6">System Alerts</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4 p-5 bg-tertiary-fixed/30 rounded-2xl border border-tertiary/10">
+                    <div className="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-on-tertiary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>priority_high</span>
+                    </div>
+                    <div>
+                      <h6 className="text-sm font-black text-on-tertiary-fixed uppercase tracking-wider mb-1">Project Deadline</h6>
+                      <p className="text-xs text-on-tertiary-fixed-variant leading-relaxed font-medium opacity-80">Phase 2 project submission ends in 12 hours. Ensure all students have uploaded documents.</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </StudentLayout>
   );
 };
 

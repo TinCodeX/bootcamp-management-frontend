@@ -14,7 +14,7 @@ const LoginPage = () => {
     } else {
       localStorage.setItem('userName', 'User');
     }
-    navigate('/dashboard');
+    navigate('/student/dashboard');
   };
 
   return (
@@ -81,13 +81,13 @@ const LoginPage = () => {
               </div>
 
               <div className="pt-2">
-              <button
-                className="w-full bg-primary text-on-primary font-bold py-4 rounded-xl shadow-lg shadow-primary/20 hover:bg-gradient-to-r hover:from-primary hover:to-primary-container transition-all duration-300 transform active:scale-[0.98] flex justify-center items-center"
-                type="submit"
-              >
-                Login
-              </button>
-            </div>
+                <button
+                  className="w-full bg-primary text-on-primary font-bold py-4 rounded-xl shadow-lg shadow-primary/20 hover:bg-gradient-to-r hover:from-primary hover:to-primary-container transition-all duration-300 transform active:scale-[0.98] flex justify-center items-center"
+                  type="submit"
+                >
+                  Login
+                </button>
+              </div>
 
 
             </form>
