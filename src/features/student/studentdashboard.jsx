@@ -1,5 +1,10 @@
+import React from 'react';
+import DashboardPage from '../../shared/components/DashboardPage';
+
+
+
 function StudentDashboard() {
-  return <div>Student Dashboard</div>;
+  return <DashboardPage userName="Scholar Abebe" />;
 }
 
-export default StudentDashboard;
+export default StudentDashboard;

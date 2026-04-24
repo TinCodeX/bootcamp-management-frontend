@@ -1,5 +1,8 @@
-import StudentDashboard from "../features/student/StudentDashboard";
-import InstructorDashboard from "../features/instructor/InstructorDashboard";
+import StudentDashboard from "../features/student/studentdashboard";
+import InstructorDashboard from "../features/instructor/instructordashboard";
+
+
+
 import AdminDashboard from "../features/admin/AdminDashboard";
 
 const user = {
