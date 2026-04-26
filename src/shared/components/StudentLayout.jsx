@@ -1,8 +1,11 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { studentAuthService } from '../../services/studentAuthService';
 
-const StudentLayout = ({ children, activeTab }) => {
+const StudentLayout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  
   const isBootcampContext = [
     '/student/sessions',
     '/student/assignments',
@@ -10,6 +13,18 @@ const StudentLayout = ({ children, activeTab }) => {
     '/student/attendance',
     '/student/feedback'
   ].some(path => location.pathname.startsWith(path));
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    try {
+      await studentAuthService.logout();
+    } catch (err) {
+      console.error('Logout error', err);
+    } finally {
+      localStorage.clear();
+      navigate('/student');
+    }
+  };
 
   return (
     <div className="bg-surface text-on-surface flex min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -102,10 +117,13 @@ const StudentLayout = ({ children, activeTab }) => {
           </div>
         </nav>
         <div className="mt-auto px-4">
-          <Link className="flex items-center gap-3 text-on-surface/60 hover:text-error hover:bg-error-container/10 my-1 p-3 transition-colors duration-200 rounded-xl font-label text-sm font-medium uppercase tracking-wider" to="/">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 text-on-surface/60 hover:text-error hover:bg-error-container/10 my-1 p-3 transition-colors duration-200 rounded-xl font-label text-sm font-medium uppercase tracking-wider"
+          >
             <span className="material-symbols-outlined">logout</span>
             <span className="font-headline tracking-tight">Logout</span>
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -116,7 +134,6 @@ const StudentLayout = ({ children, activeTab }) => {
             <Link
               className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors duration-200 relative active:scale-95 no-underline"
               to="/student/notifications"
-              state={{ fromGlobal: !isBootcampContext }}
             >
               notifications
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-tertiary rounded-full border-2 border-surface"></span>

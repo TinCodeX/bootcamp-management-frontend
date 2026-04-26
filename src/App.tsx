@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import StudentLogin from "./features/student/StudentLogin";
+import StudentForgotPassword from "./features/student/StudentForgotPassword";
+import StudentResetPassword from "./features/student/StudentResetPassword";
+
 import StudentDashboard from "./features/student/StudentDashboard";
 import StudentBootcamps from "./features/student/StudentBootcamps";
 import StudentSessions from "./features/student/StudentSessions";
@@ -19,12 +22,19 @@ import AssignmentSubmitPage from "./shared/components/AssignmentSubmitPage";
 import AssignmentBriefPage from "./shared/components/AssignmentBriefPage";
 import AssignmentResultPage from "./shared/components/AssignmentResultPage";
 import SubmissionSuccessPage from "./shared/components/SubmissionSuccessPage";
+import ChangePasswordPage from "./shared/components/ChangePasswordPage";
+
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<StudentLogin />} />
+        <Route path="/" element={<Navigate to="/student" replace />} />
+        {/* AUTH ROUTES */}
+        <Route path="/student" element={<StudentLogin />} />
+        <Route path="/student/forgot-password" element={<StudentForgotPassword />} />
+        <Route path="/student/reset-password" element={<StudentResetPassword />} />
+
         {/* Student Routes */}
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/student/my-bootcamps" element={<StudentBootcamps />} />
@@ -45,6 +55,8 @@ function App() {
         <Route path="/student/assignments/brief/:id" element={<AssignmentBriefPage />} />
         <Route path="/student/assignments/result/:id" element={<AssignmentResultPage />} />
         <Route path="/student/success" element={<SubmissionSuccessPage />} />
+        <Route path="/student/change-password" element={<ChangePasswordPage />} />
+
 
         {/* Legacy Redirects */}
         <Route path="/dashboard" element={<Navigate to="/student/dashboard" replace />} />
