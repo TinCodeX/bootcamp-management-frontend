@@ -41,7 +41,7 @@ const AssignmentSubmitPage = () => {
     <StudentLayout>
       <div className="p-8 max-w-4xl mx-auto w-full">
         <header className="mb-12">
-          <Link className="flex items-center gap-2 text-primary text-sm font-bold hover:underline mb-4" to="/assignments">
+          <Link className="flex items-center gap-2 text-primary text-sm font-bold hover:underline mb-4" to="/student/assignments">
             <span className="material-symbols-outlined text-base">arrow_back</span>
             Back to Assignments
           </Link>

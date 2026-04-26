@@ -7,7 +7,7 @@ const AssignmentBriefPage = () => {
     <StudentLayout>
       <div className="p-8 max-w-4xl mx-auto w-full">
         <header className="mb-12">
-          <Link className="flex items-center gap-2 text-primary text-sm font-bold hover:underline mb-4" to="/assignments">
+          <Link className="flex items-center gap-2 text-primary text-sm font-bold hover:underline mb-4" to="/student/assignments">
             <span className="material-symbols-outlined text-base">arrow_back</span>
             Back to Assignments
           </Link>
@@ -16,7 +16,7 @@ const AssignmentBriefPage = () => {
               <span className="text-[10px] font-bold text-tertiary tracking-widest uppercase mb-2 block">Project Brief</span>
               <h1 className="font-headline text-4xl font-extrabold text-on-surface tracking-tight leading-tight">React Hooks & State Management</h1>
             </div>
-            <Link className="px-8 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm shadow-md active:scale-95 transition-transform" to="/assignments/submit/1">
+            <Link className="px-8 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm shadow-md active:scale-95 transition-transform" to="/student/assignments/submit/1">
               Start Submission
             </Link>
           </div>
