@@ -5,7 +5,7 @@ import { studentAuthService } from '../../services/studentAuthService';
 const StudentLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const isBootcampContext = [
     '/student/sessions',
     '/student/assignments',
@@ -117,7 +117,7 @@ const StudentLayout = ({ children }) => {
           </div>
         </nav>
         <div className="mt-auto px-4">
-          <button 
+          <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 text-on-surface/60 hover:text-error hover:bg-error-container/10 my-1 p-3 transition-colors duration-200 rounded-xl font-label text-sm font-medium uppercase tracking-wider"
           >

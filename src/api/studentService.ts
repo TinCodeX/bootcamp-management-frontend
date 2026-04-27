@@ -58,5 +58,67 @@ export const studentService = {
   getAttendanceStats: async (bootcampId: string) => {
     const response = await axiosInstance.get(ENDPOINTS.BOOTCAMPS.ATTENDANCE_STATS(bootcampId));
     return response.data;
+  },
+
+  getPendingFeedback: async () => {
+    const response = await axiosInstance.get(ENDPOINTS.STUDENT.FEEDBACK_PENDING);
+    return response.data;
+  },
+
+  submitFeedback: async (sessionId: string, data: any) => {
+    const response = await axiosInstance.post(ENDPOINTS.STUDENT.FEEDBACK_SUBMIT(sessionId), data);
+    return response.data;
+  },
+
+  updateFeedback: async (sessionId: string, data: any) => {
+    const response = await axiosInstance.put(ENDPOINTS.STUDENT.FEEDBACK_SUBMIT(sessionId), data);
+    return response.data;
+  },
+
+  getMyFeedback: async (sessionId: string) => {
+    const response = await axiosInstance.get(ENDPOINTS.STUDENT.FEEDBACK_MY(sessionId));
+    return response.data;
+  },
+
+  getSubmissions: async () => {
+    const response = await axiosInstance.get(ENDPOINTS.STUDENT.SUBMISSIONS);
+    return response.data;
+  },
+
+  getSubmissionDetails: async (submissionId: string) => {
+    const response = await axiosInstance.get(ENDPOINTS.STUDENT.SUBMISSION_DETAIL(submissionId));
+    return response.data;
+  },
+
+  resubmitWork: async (submissionId: string, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axiosInstance.put(ENDPOINTS.STUDENT.SUBMISSION_DETAIL(submissionId), formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
+
+  getTasks: async () => {
+    const response = await axiosInstance.get(ENDPOINTS.STUDENT.TASKS);
+    return response.data;
+  },
+
+  getTaskDetails: async (taskId: string) => {
+    const response = await axiosInstance.get(ENDPOINTS.STUDENT.TASK_DETAIL(taskId));
+    return response.data;
+  },
+
+  submitTask: async (taskId: string, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axiosInstance.post(ENDPOINTS.STUDENT.TASK_SUBMIT(taskId), formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
   }
 };

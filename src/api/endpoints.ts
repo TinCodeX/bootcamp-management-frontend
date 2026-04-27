@@ -31,4 +31,14 @@ export const ENDPOINTS = {
     ATTENDANCE: (bootcampId: string) => `/student/bootcamps/${bootcampId}/attendance`,
     ATTENDANCE_STATS: (bootcampId: string) => `/student/bootcamps/${bootcampId}/attendance/stat`,
   },
+  STUDENT: {
+    FEEDBACK_PENDING: '/student/sessions/feedback-pending',
+    FEEDBACK_SUBMIT: (sessionId: string) => `/student/sessions/${sessionId}/feedback`,
+    FEEDBACK_MY: (sessionId: string) => `/student/sessions/${sessionId}/feedback/my`,
+    SUBMISSIONS: '/student/submissions',
+    SUBMISSION_DETAIL: (submissionId: string) => `/student/submissions/${submissionId}`,
+    TASKS: '/student/tasks',
+    TASK_DETAIL: (taskId: string) => `/student/tasks/${taskId}`,
+    TASK_SUBMIT: (taskId: string) => `/student/tasks/${taskId}/submit`,
+  },
 } as const;

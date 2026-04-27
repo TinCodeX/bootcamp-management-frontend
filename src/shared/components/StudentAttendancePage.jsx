@@ -1,23 +1,63 @@
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import StudentLayout from './StudentLayout';
+import { studentService } from '../../api/studentService';
 
 const StudentAttendancePage = () => {
-  const attendanceHistory = [
-    { id: 1, date: 'Oct 24, 2023', session: 'Advanced React Patterns & Hooks', module: 'Module 4: Frontend Mastery', status: 'Present', color: 'bg-on-secondary-container/10 text-on-secondary-container', marker: 'Instructor' },
-    { id: 2, date: 'Oct 22, 2023', session: 'Backend Architecture with Node.js', module: 'Module 5: Scalable Systems', status: 'Late', color: 'bg-secondary-fixed text-on-secondary-fixed-variant', marker: 'Instructor' },
-    { id: 3, date: 'Oct 20, 2023', session: 'Database Modeling & SQL Deep Dive', module: 'Module 3: Data Integrity', status: 'Absent', color: 'bg-tertiary-container/20 text-tertiary', marker: 'Instructor' },
-    { id: 4, date: 'Oct 18, 2023', session: 'Microservices Communication', module: 'Module 5: Scalable Systems', status: 'Excused', color: 'bg-secondary-container/40 text-secondary', marker: 'Instructor' },
-    { id: 5, date: 'Oct 16, 2023', session: 'Intro to System Design', module: 'Module 5: Scalable Systems', status: 'Present', color: 'bg-on-secondary-container/10 text-on-secondary-container', marker: 'Instructor' },
-  ];
+  const [attendanceHistory, setAttendanceHistory] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  // Using a default bootcampId (matching StudentResourcesPage pattern)
+  const bootcampId = '65f1a2b3c4d5e6f7g8h9i012';
+
+  useEffect(() => {
+    loadAttendanceData();
+  }, [bootcampId]);
+
+  const loadAttendanceData = async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const [history, attendanceStats] = await Promise.all([
+        studentService.getAttendance(bootcampId),
+        studentService.getAttendanceStats(bootcampId)
+      ]);
+      setAttendanceHistory(history || []);
+      setStats(attendanceStats);
+    } catch (err) {
+      console.error('Failed to load attendance data', err);
+      setError('Could not load attendance records.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'present': return 'bg-on-secondary-container/10 text-on-secondary-container';
+      case 'late': return 'bg-secondary-fixed text-on-secondary-fixed-variant';
+      case 'absent': return 'bg-tertiary-container/20 text-tertiary';
+      case 'excused': return 'bg-secondary-container/40 text-secondary';
+      default: return 'bg-surface-container-high text-on-surface-variant';
+    }
+  };
 
   return (
     <StudentLayout>
       <section className="p-8 max-w-7xl w-full mx-auto">
-        {/* Hero Heading Section */}
         <div className="mb-10">
           <h2 className="text-5xl font-extrabold text-on-surface tracking-tight font-manrope mb-2 leading-tight">Attendance</h2>
           <p className="text-lg text-on-surface-variant font-medium opacity-70">Track your session participation and consistency.</p>
         </div>
+
+        {error && (
+          <div className="mb-8 p-4 bg-error/10 text-error rounded-xl text-sm font-bold flex items-center gap-2">
+            <span className="material-symbols-outlined">error</span>
+            {error}
+          </div>
+        )}
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -26,8 +66,9 @@ const StudentAttendancePage = () => {
             <div className="absolute top-0 left-0 h-1 w-full bg-primary opacity-20"></div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Attendance %</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-4xl font-headline font-extrabold text-primary">94.2%</span>
-              <span className="text-secondary text-sm font-semibold">+2.1%</span>
+              <span className="text-4xl font-headline font-extrabold text-primary">
+                {stats?.percentage !== undefined ? `${stats.percentage}%` : '--%'}
+              </span>
             </div>
           </div>
           {/* Total Sessions Card */}
@@ -35,8 +76,9 @@ const StudentAttendancePage = () => {
             <div className="absolute top-0 left-0 h-1 w-full bg-secondary opacity-20"></div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Total Sessions</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-4xl font-headline font-extrabold text-on-surface">36</span>
-              <span className="text-on-surface-variant/60 text-sm font-bold">of 40</span>
+              <span className="text-4xl font-headline font-extrabold text-on-surface">
+                {stats?.totalSessions || '--'}
+              </span>
             </div>
           </div>
           {/* Present Count Card */}
@@ -44,17 +86,20 @@ const StudentAttendancePage = () => {
             <div className="absolute top-0 left-0 h-1 w-full bg-on-secondary-container opacity-20"></div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Present Count</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-4xl font-headline font-extrabold text-on-secondary-container">34</span>
+              <span className="text-4xl font-headline font-extrabold text-on-secondary-container">
+                {stats?.presentCount || '--'}
+              </span>
               <span className="text-on-secondary-container/60 text-sm font-bold">days</span>
             </div>
           </div>
-          {/* Absence Rate Card */}
+          {/* Absence Count Card */}
           <div className="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 shadow-sm flex flex-col gap-1 relative overflow-hidden">
             <div className="absolute top-0 left-0 h-1 w-full bg-tertiary opacity-20"></div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Absence Rate</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Absences</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-4xl font-headline font-extrabold text-tertiary">5.8%</span>
-              <span className="text-tertiary/60 text-sm font-bold">Low risk</span>
+              <span className="text-4xl font-headline font-extrabold text-tertiary">
+                {stats?.absentCount || '--'}
+              </span>
             </div>
           </div>
         </div>
@@ -79,21 +124,35 @@ const StudentAttendancePage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-container/30">
-                {attendanceHistory.map((item) => (
-                  <tr key={item.id} className="bg-surface-container-lowest hover:bg-surface-bright transition-colors group">
-                    <td className="px-8 py-6 font-body text-sm font-bold text-on-surface">{item.date}</td>
-                    <td className="px-8 py-6">
-                      <p className="font-bold text-on-surface text-sm group-hover:text-primary transition-colors">{item.session}</p>
-                      <p className="text-[11px] text-on-surface-variant font-medium opacity-60">{item.module}</p>
-                    </td>
-                    <td className="px-8 py-6">
-                      <span className={`inline-flex items-center px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${item.color}`}>
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="px-8 py-6 text-sm font-bold text-on-surface-variant/60 text-right">{item.marker}</td>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan="4" className="px-8 py-10 text-center text-on-surface-variant opacity-50 font-bold">Loading records...</td>
                   </tr>
-                ))}
+                ) : attendanceHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="px-8 py-10 text-center text-on-surface-variant opacity-50">No attendance records found.</td>
+                  </tr>
+                ) : (
+                  attendanceHistory.slice(0, 10).map((item) => (
+                    <tr key={item.id} className="bg-surface-container-lowest hover:bg-surface-bright transition-colors group">
+                      <td className="px-8 py-6 font-body text-sm font-bold text-on-surface">
+                        {item.date ? new Date(item.date).toLocaleDateString() : 'N/A'}
+                      </td>
+                      <td className="px-8 py-6">
+                        <p className="font-bold text-on-surface text-sm group-hover:text-primary transition-colors">{item.sessionTitle || item.session?.title || 'Session'}</p>
+                        <p className="text-[11px] text-on-surface-variant font-medium opacity-60">{item.moduleName || 'Module'}</p>
+                      </td>
+                      <td className="px-8 py-6">
+                        <span className={`inline-flex items-center px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${getStatusColor(item.status)}`}>
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="px-8 py-6 text-sm font-bold text-on-surface-variant/60 text-right">
+                        {item.markedBy || item.instructorName || 'Instructor'}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -101,7 +160,7 @@ const StudentAttendancePage = () => {
 
         {/* Footer Meta */}
         <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-6 px-2">
-          <p className="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Last updated: Today at 09:42 AM</p>
+          <p className="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Live synchronization active</p>
           <div className="flex flex-wrap gap-6">
             <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
               <span className="w-2.5 h-2.5 rounded-full bg-on-secondary-container/30 border border-on-secondary-container/20"></span> Present

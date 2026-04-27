@@ -1,22 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import StudentLayout from './StudentLayout';
+import { studentService } from '../../api/studentService';
 
 const FullAttendanceHistoryPage = () => {
   const [filter, setFilter] = useState('All');
+  const [history, setHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const history = [
-    { id: 1, date: 'Oct 24, 2023', session: 'Advanced React Patterns & Hooks', module: 'Module 4: Frontend Mastery', status: 'Present', color: 'bg-on-secondary-container/10 text-on-secondary-container', marker: 'Instructor Lelo' },
-    { id: 2, date: 'Oct 22, 2023', session: 'Backend Architecture with Node.js', module: 'Module 5: Scalable Systems', status: 'Late', color: 'bg-secondary-fixed text-on-secondary-fixed-variant', marker: 'Instructor Lelo' },
-    { id: 3, date: 'Oct 20, 2023', session: 'Database Modeling & SQL Deep Dive', module: 'Module 3: Data Integrity', status: 'Absent', color: 'bg-tertiary-container/20 text-tertiary', marker: 'Instructor Lelo' },
-    { id: 4, date: 'Oct 18, 2023', session: 'Microservices Communication', module: 'Module 5: Scalable Systems', status: 'Excused', color: 'bg-secondary-container/40 text-secondary', marker: 'Instructor Lelo' },
-    { id: 5, date: 'Oct 16, 2023', session: 'Intro to System Design', module: 'Module 5: Scalable Systems', status: 'Present', color: 'bg-on-secondary-container/10 text-on-secondary-container', marker: 'Instructor Lelo' },
-    { id: 6, date: 'Oct 14, 2023', session: 'Authentication & JWT Workshop', module: 'Module 4: Frontend Mastery', status: 'Present', color: 'bg-on-secondary-container/10 text-on-secondary-container', marker: 'Instructor Lelo' },
-    { id: 7, date: 'Oct 12, 2023', session: 'Redis & Caching Strategies', module: 'Module 5: Scalable Systems', status: 'Present', color: 'bg-on-secondary-container/10 text-on-secondary-container', marker: 'Instructor Lelo' },
-    { id: 8, date: 'Oct 10, 2023', session: 'CSS Architecture & SASS', module: 'Module 4: Frontend Mastery', status: 'Late', color: 'bg-secondary-fixed text-on-secondary-fixed-variant', marker: 'Instructor Lelo' },
-    { id: 9, date: 'Oct 08, 2023', session: 'Git Rebase & Advanced CLI', module: 'Module 1: Foundations', status: 'Present', color: 'bg-on-secondary-container/10 text-on-secondary-container', marker: 'Instructor Lelo' },
-    { id: 10, date: 'Oct 06, 2023', session: 'TypeScript Fundamentals', module: 'Module 1: Foundations', status: 'Present', color: 'bg-on-secondary-container/10 text-on-secondary-container', marker: 'Instructor Lelo' },
-  ];
+  // Using a default bootcampId (matching StudentResourcesPage pattern)
+  const bootcampId = '65f1a2b3c4d5e6f7g8h9i012';
+
+  useEffect(() => {
+    loadAttendanceHistory();
+  }, [bootcampId]);
+
+  const loadAttendanceHistory = async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const data = await studentService.getAttendance(bootcampId);
+      setHistory(data || []);
+    } catch (err) {
+      console.error('Failed to load attendance history', err);
+      setError('Could not load attendance records.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'present': return 'bg-on-secondary-container/10 text-on-secondary-container';
+      case 'late': return 'bg-secondary-fixed text-on-secondary-fixed-variant';
+      case 'absent': return 'bg-tertiary-container/20 text-tertiary';
+      case 'excused': return 'bg-secondary-container/40 text-secondary';
+      default: return 'bg-surface-container-high text-on-surface-variant';
+    }
+  };
 
   const filteredHistory = filter === 'All' ? history : history.filter(item => item.status === filter);
 
@@ -31,7 +53,7 @@ const FullAttendanceHistoryPage = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <h1 className="font-headline text-4xl font-extrabold text-on-surface tracking-tight mb-2 leading-tight">Full Attendance History</h1>
-              <p className="text-on-surface-variant font-medium opacity-70">A complete log of your participation in the Fullstack Dev 2024 bootcamp.</p>
+              <p className="text-on-surface-variant font-medium opacity-70">A complete log of your participation in the bootcamp.</p>
             </div>
 
             {/* Filter Pills */}
@@ -52,6 +74,13 @@ const FullAttendanceHistoryPage = () => {
           </div>
         </header>
 
+        {error && (
+          <div className="mb-8 p-4 bg-error/10 text-error rounded-xl text-sm font-bold flex items-center gap-2">
+            <span className="material-symbols-outlined">error</span>
+            {error}
+          </div>
+        )}
+
         <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -64,34 +93,41 @@ const FullAttendanceHistoryPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-container/30">
-                {filteredHistory.map((item) => (
-                  <tr key={item.id} className="hover:bg-surface-bright transition-colors group">
-                    <td className="px-8 py-6 font-body text-sm font-bold text-on-surface">{item.date}</td>
-                    <td className="px-8 py-6">
-                      <p className="font-bold text-on-surface text-sm group-hover:text-primary transition-colors">{item.session}</p>
-                      <p className="text-[11px] text-on-surface-variant font-medium opacity-60">{item.module}</p>
-                    </td>
-                    <td className="px-8 py-6">
-                      <span className={`inline-flex items-center px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${item.color}`}>
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="px-8 py-6 text-right">
-                      <div className="flex items-center justify-end gap-2 text-on-surface-variant/60">
-                        <span className="text-xs font-bold">{item.marker}</span>
-                        <div className="w-6 h-6 rounded-full bg-primary-container/20 flex items-center justify-center">
-                          <span className="material-symbols-outlined text-[14px]">person</span>
-                        </div>
-                      </div>
-                    </td>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan="4" className="px-8 py-20 text-center text-on-surface-variant font-medium opacity-50">Loading history...</td>
                   </tr>
-                ))}
-                {filteredHistory.length === 0 && (
+                ) : filteredHistory.length === 0 ? (
                   <tr>
                     <td colSpan="4" className="px-8 py-20 text-center text-on-surface-variant font-medium italic opacity-50">
                       No records found for the selected filter.
                     </td>
                   </tr>
+                ) : (
+                  filteredHistory.map((item) => (
+                    <tr key={item.id} className="hover:bg-surface-bright transition-colors group">
+                      <td className="px-8 py-6 font-body text-sm font-bold text-on-surface">
+                        {item.date ? new Date(item.date).toLocaleDateString() : 'N/A'}
+                      </td>
+                      <td className="px-8 py-6">
+                        <p className="font-bold text-on-surface text-sm group-hover:text-primary transition-colors">{item.sessionTitle || item.session?.title || 'Session'}</p>
+                        <p className="text-[11px] text-on-surface-variant font-medium opacity-60">{item.moduleName || 'Module'}</p>
+                      </td>
+                      <td className="px-8 py-6">
+                        <span className={`inline-flex items-center px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${getStatusColor(item.status)}`}>
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="px-8 py-6 text-right">
+                        <div className="flex items-center justify-end gap-2 text-on-surface-variant/60">
+                          <span className="text-xs font-bold">{item.markedBy || item.instructorName || 'Instructor'}</span>
+                          <div className="w-6 h-6 rounded-full bg-primary-container/20 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-[14px]">person</span>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
@@ -100,7 +136,7 @@ const FullAttendanceHistoryPage = () => {
 
         <footer className="mt-8 text-center">
           <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">
-            End of records for Oct 2023 - Present
+            End of records
           </p>
         </footer>
       </div>

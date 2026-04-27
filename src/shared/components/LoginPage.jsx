@@ -79,8 +79,8 @@ const LoginPage = ({
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  <button 
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors" 
+                  <button
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                   >
