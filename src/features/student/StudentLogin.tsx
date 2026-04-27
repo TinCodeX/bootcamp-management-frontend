@@ -20,7 +20,27 @@ const StudentLogin: React.FC = () => {
       localStorage.setItem('vanguard_token', res.accessToken);
       localStorage.setItem('vanguard_refresh_token', res.refreshToken);
       localStorage.setItem('userName', username || 'User');
-      navigate('/student/dashboard');
+
+      const userRole = res.role || res.user?.role;
+      let decodedRole = null;
+      if (!userRole && res.accessToken) {
+        try {
+          const payloadBase64 = res.accessToken.split('.')[1];
+          const decodedJson = atob(payloadBase64);
+          const payload = JSON.parse(decodedJson);
+          decodedRole = payload.role;
+        } catch (e) {
+          console.error('Could not parse token', e);
+        }
+      }
+      
+      const finalRole = userRole || decodedRole;
+
+      if (finalRole && (finalRole.toLowerCase() === 'admin' || finalRole.toLowerCase() === 'superadmin')) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/student/dashboard');
+      }
     } catch (err: any) {
       console.error(err);
       if (err.response) {

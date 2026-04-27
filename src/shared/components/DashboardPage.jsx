@@ -27,9 +27,9 @@ const DashboardPage = () => {
         studentService.getSubmissions(),
         studentService.getTasks()
       ]);
-      setPendingFeedback(feedback || []);
-      setSubmissions(subs || []);
-      setTasksList(tks || []);
+      setPendingFeedback(Array.isArray(feedback) ? feedback : []);
+      setSubmissions(Array.isArray(subs) ? subs : []);
+      setTasksList(Array.isArray(tks) ? tks : []);
     } catch (err) {
       console.error('Failed to load dashboard data', err);
     } finally {
