@@ -23,6 +23,11 @@ import AssignmentBriefPage from "./shared/components/AssignmentBriefPage";
 import AssignmentResultPage from "./shared/components/AssignmentResultPage";
 import SubmissionSuccessPage from "./shared/components/SubmissionSuccessPage";
 import ChangePasswordPage from "./shared/components/ChangePasswordPage";
+import AdminDashboard from "./features/admin/admindashboard";
+import AdminDivisions from "./features/admin/AdminDivisions";
+import AdminBootcamps from "./features/admin/AdminBootcamps";
+import AdminUsers from "./features/admin/AdminUsers";
+import AdminSettings from "./features/admin/AdminSettings";
 
 
 function App() {
@@ -56,6 +61,14 @@ function App() {
         <Route path="/student/assignments/result/:id" element={<AssignmentResultPage />} />
         <Route path="/student/success" element={<SubmissionSuccessPage />} />
         <Route path="/student/change-password" element={<ChangePasswordPage />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/divisions" element={<AdminDivisions />} />
+        <Route path="/admin/bootcamps" element={<AdminBootcamps />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
 
 
         {/* Legacy Redirects */}
