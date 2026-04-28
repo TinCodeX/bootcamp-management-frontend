@@ -10,10 +10,18 @@ function asList(value) {
   return [];
 }
 
+function getUserStatus(user) {
+  return user?.status || "Active";
+}
+
+const USER_STATUS_OPTIONS = ["Active", "Suspended", "Graduated"];
+const USER_ROLE_OPTIONS = ["Student", "Instructor", "Admin"];
+
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [form, setForm] = useState({
     firstName: "",
@@ -49,20 +57,37 @@ function AdminUsers() {
       toast.success("User created successfully!");
       await load();
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Failed to create user.");
+      const message = err?.response?.data?.message || err?.message || "Failed to create user.";
+      setError(message);
+      toast.error(message);
     }
   };
 
-  const onToggle = async (user) => {
+  const onStatusChange = async (user, status) => {
     const id = user?._id || user?.id;
     if (!id) return;
     try {
-      await adminService.toggleUserStatus(id, user?.isActive === false);
-      const action = user?.isActive === false ? "activated" : "deactivated";
-      toast.success(`User successfully ${action}!`);
+      await adminService.updateUserStatus(id, status);
+      toast.success(`User status updated to ${status}.`);
       await load();
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Failed to update user status.");
+      const message = err?.response?.data?.message || err?.message || "Failed to update user status.";
+      setError(message);
+      toast.error(message);
+    }
+  };
+
+  const onRoleChange = async (user, role) => {
+    const id = user?._id || user?.id;
+    if (!id) return;
+    try {
+      await adminService.updateUser(id, { role });
+      toast.success(`User role updated to ${role}.`);
+      await load();
+    } catch (err) {
+      const message = err?.response?.data?.message || err?.message || "Failed to update user role.";
+      setError(message);
+      toast.error(message);
     }
   };
 
@@ -88,6 +113,13 @@ function AdminUsers() {
                 <option value="Instructor">Instructor</option>
                 <option value="Admin">Admin</option>
               </AdminSelect>
+              <AdminSelect className="md:col-span-2" onChange={(e) => setField("status", e.target.value)} value={form.status}>
+                {USER_STATUS_OPTIONS.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </AdminSelect>
             </div>
             <div className="mt-5 flex justify-end">
               <AdminButton className="rounded-full shadow-lg shadow-primary/20 hover:-translate-y-1 px-8" onClick={onCreate}>
@@ -98,13 +130,21 @@ function AdminUsers() {
         </section>
 
         <section className="rounded-3xl border border-outline-variant/20 bg-surface-container-low/50 backdrop-blur-md p-8 shadow-sm">
-          <div className="grid gap-4 md:grid-cols-2 relative z-10">
+          <div className="grid gap-4 md:grid-cols-3 relative z-10">
             <AdminInput onChange={(e) => setQuery(e.target.value)} placeholder="Search by name, username, or email..." value={query} />
             <AdminSelect onChange={(e) => setRoleFilter(e.target.value)} value={roleFilter}>
               <option value="all">All Roles</option>
               <option value="student">Student</option>
               <option value="instructor">Instructor</option>
               <option value="admin">Admin</option>
+            </AdminSelect>
+            <AdminSelect onChange={(e) => setStatusFilter(e.target.value)} value={statusFilter}>
+              <option value="all">All Statuses</option>
+              {USER_STATUS_OPTIONS.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
             </AdminSelect>
           </div>
           {error ? <p className="text-sm text-error bg-error/10 p-4 rounded-xl border border-error/20 mt-4">{error}</p> : null}
@@ -114,7 +154,9 @@ function AdminUsers() {
                 const q = query.trim().toLowerCase();
                 const hay = `${user?.firstName || ""} ${user?.lastName || ""} ${user?.username || ""} ${user?.email || ""}`.toLowerCase();
                 const roleMatches = roleFilter === "all" || String(user?.role || "").toLowerCase() === roleFilter;
-                return (!q || hay.includes(q)) && roleMatches;
+                const currentStatus = getUserStatus(user);
+                const statusMatches = statusFilter === "all" || currentStatus === statusFilter;
+                return (!q || hay.includes(q)) && roleMatches && statusMatches;
               })
               .map((user) => (
                 <article className="group flex flex-col md:flex-row md:items-center justify-between rounded-2xl border border-outline-variant/20 bg-surface/60 backdrop-blur-sm p-5 transition-all duration-300 hover:bg-surface hover:shadow-md hover:-translate-y-0.5 hover:border-primary/20 gap-4" key={user?._id || user?.id}>
@@ -132,15 +174,28 @@ function AdminUsers() {
                         <span className="w-1 h-1 rounded-full bg-outline-variant/50" />
                         <span className="text-xs uppercase tracking-wider font-bold text-primary/80">{user?.role || "unknown"}</span>
                         <span className="w-1 h-1 rounded-full bg-outline-variant/50" />
-                        <span className={`text-xs font-bold uppercase tracking-wider ${user?.isActive === false ? "text-error" : "text-primary"}`}>
-                          {user?.isActive === false ? "Inactive" : "Active"}
+                        <span className={`text-xs font-bold uppercase tracking-wider ${getUserStatus(user) === "Suspended" ? "text-error" : "text-primary"}`}>
+                          {getUserStatus(user)}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <AdminButton className="rounded-full px-6 shadow-sm w-full md:w-auto" onClick={() => onToggle(user)} variant={user?.isActive === false ? "primary" : "ghost"}>
-                    {user?.isActive === false ? "Activate Account" : "Deactivate"}
-                  </AdminButton>
+                  <div className="w-full md:w-auto min-w-44 flex gap-2">
+                    <AdminSelect value={user?.role || "Student"} onChange={(e) => onRoleChange(user, e.target.value)}>
+                      {USER_ROLE_OPTIONS.map((role) => (
+                        <option key={role} value={role}>
+                          {role}
+                        </option>
+                      ))}
+                    </AdminSelect>
+                    <AdminSelect value={getUserStatus(user)} onChange={(e) => onStatusChange(user, e.target.value)}>
+                      {USER_STATUS_OPTIONS.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </AdminSelect>
+                  </div>
                 </article>
               ))}
             {users.length === 0 ? <p className="p-8 text-center text-sm text-on-surface-variant font-medium">No users found.</p> : null}

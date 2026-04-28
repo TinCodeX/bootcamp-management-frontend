@@ -16,6 +16,8 @@ export interface BootcampPayload {
   name: string;
   description?: string;
   division_id?: string;
+  startDate?: string;
+  endDate?: string;
   isActive?: boolean;
 }
 
@@ -60,7 +62,8 @@ export const adminService = {
   getUsers: (params: AdminQuery = {}) => withData(axiosInstance.get(ENDPOINTS.USERS.BASE, { params })),
   createUser: (payload: UserPayload) => withData(axiosInstance.post(ENDPOINTS.USERS.BASE, payload)),
   updateUser: (id: string, payload: Partial<UserPayload>) => withData(axiosInstance.put(ENDPOINTS.USERS.DETAIL(id), payload)),
-  toggleUserStatus: (id: string, isActive: boolean) => withData(axiosInstance.patch(ENDPOINTS.USERS.STATUS(id), { isActive })),
+  updateUserStatus: (id: string, status: "Active" | "Suspended" | "Graduated") =>
+    withData(axiosInstance.patch(ENDPOINTS.USERS.STATUS(id), { status })),
 
   getSettings: () => withData(axiosInstance.get(ENDPOINTS.SETTINGS.BASE)),
   updateSettings: (payload: SettingsPayload) => withData(axiosInstance.put(ENDPOINTS.SETTINGS.BASE, payload)),

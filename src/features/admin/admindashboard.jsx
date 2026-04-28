@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { adminService } from "../../services/adminService";
 import AdminLayout from "../../shared/components/admin/AdminLayout";
 import { StatGrid } from "../../shared/components/admin/AdminUI";
@@ -17,6 +18,7 @@ function getDivisionId(bootcamp) {
 }
 
 function AdminDashboard() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [divisions, setDivisions] = useState([]);
@@ -101,7 +103,11 @@ function AdminDashboard() {
               ) : (
                 <ul className="space-y-3 text-sm mt-5">
                   {divisions.slice(0, 6).map((division) => (
-                    <li key={division?._id || division?.id} className="rounded-xl border border-outline-variant/20 bg-surface/60 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-primary/20">
+                    <li
+                      key={division?._id || division?.id}
+                      className="rounded-xl border border-outline-variant/20 bg-surface/60 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-primary/20 cursor-pointer"
+                      onClick={() => navigate(`/admin/divisions/${division?._id || division?.id}`)}
+                    >
                       <strong className="text-base">{division?.name || "Unnamed Division"}</strong>
                       {division?.description ? <p className="text-on-surface-variant mt-1 text-xs line-clamp-1">{division.description}</p> : null}
                     </li>

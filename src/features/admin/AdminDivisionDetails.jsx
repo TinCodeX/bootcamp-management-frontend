@@ -86,7 +86,7 @@ function AdminDivisionDetails() {
       } else {
         await adminService.updateBootcamp(bootcampId, { isActive: true });
       }
-      toast.success(`Bootcamp successfully ${bootcamp?.isActive !== false ? "archived" : "activated"}`);
+      toast.success(`Bootcamp successfully ${bootcamp?.isActive !== false ? "archived" : "unarchived"}`);
       await load();
     } catch (err) {
       toast.error(err?.response?.data?.message || err?.message || "Failed to toggle bootcamp status.");
@@ -179,7 +179,7 @@ function AdminDivisionDetails() {
                       <div className="flex justify-end gap-2">
                         <AdminButton variant="ghost" onClick={() => navigate('/admin/bootcamps')}>View</AdminButton>
                         <AdminButton variant="secondary" onClick={() => onToggleBootcamp(bootcamp)}>
-                          {bootcamp?.isActive === false ? "Activate" : "Archive"}
+                          {bootcamp?.isActive === false ? "Unarchive" : "Archive"}
                         </AdminButton>
                       </div>
                     </td>

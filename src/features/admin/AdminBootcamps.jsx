@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import AdminLayout from "../../shared/components/admin/AdminLayout";
 import { AdminButton, AdminInput, AdminSelect } from "../../shared/components/admin/AdminUI";
 import { adminService } from "../../services/adminService";
+import toast from "react-hot-toast";
 
 function asList(value) {
   if (Array.isArray(value)) return value;
@@ -13,6 +14,10 @@ function extractDivisionId(bootcamp) {
   if (!bootcamp?.division_id) return "";
   if (typeof bootcamp.division_id === "object") return bootcamp.division_id._id || "";
   return bootcamp.division_id;
+}
+
+function toIsoDateString(date) {
+  return new Date(date).toISOString();
 }
 
 function AdminBootcamps() {
@@ -83,13 +88,20 @@ function AdminBootcamps() {
           description: description.trim(),
           division_id: divisionId || undefined,
         });
+        toast.success("Bootcamp updated successfully.");
       } else {
+        const startDate = new Date();
+        const endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + 3);
         const res = await adminService.createBootcamp({
           name: name.trim(),
           description: description.trim(),
           division_id: divisionId || undefined,
+          startDate: toIsoDateString(startDate),
+          endDate: toIsoDateString(endDate),
         });
         savedBootcampId = res?._id || res?.id || res?.data?._id;
+        toast.success("Bootcamp created successfully.");
       }
       
       if (savedBootcampId && leadInstructorId) {
@@ -104,7 +116,9 @@ function AdminBootcamps() {
       setDrawerOpen(false);
       await load();
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Failed to save bootcamp.");
+      const message = err?.response?.data?.message || err?.message || "Failed to save bootcamp.";
+      setError(message);
+      toast.error(message);
     }
   };
 
@@ -114,25 +128,54 @@ function AdminBootcamps() {
     try {
       if (item?.isActive !== false) {
         await adminService.deactivateBootcamp(id);
+        toast.success("Bootcamp archived successfully.");
       } else {
         await adminService.updateBootcamp(id, { isActive: true });
+        toast.success("Bootcamp unarchived successfully.");
       }
       await load();
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Failed to update bootcamp.");
+      const message = err?.response?.data?.message || err?.message || "Failed to update bootcamp.";
+      setError(message);
+      toast.error(message);
     }
   };
 
   const onDelete = async (item) => {
     const id = item?._id || item?.id;
     if (!id) return;
-    if (!window.confirm("Are you sure you want to permanently delete this bootcamp?")) return;
-    try {
-      await adminService.deleteBootcamp(id);
-      await load();
-    } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Failed to delete bootcamp.");
-    }
+    toast((t) => (
+      <div className="flex flex-col gap-3">
+        <p className="text-sm font-medium">Delete this bootcamp permanently?</p>
+        <div className="flex gap-2 justify-end">
+          <button
+            className="px-3 py-1 text-sm rounded-md border border-outline-variant/30"
+            onClick={() => toast.dismiss(t.id)}
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            className="px-3 py-1 text-sm rounded-md bg-error text-white"
+            onClick={async () => {
+              toast.dismiss(t.id);
+              try {
+                await adminService.deleteBootcamp(id);
+                toast.success("Bootcamp deleted successfully.");
+                await load();
+              } catch (err) {
+                const message = err?.response?.data?.message || err?.message || "Failed to delete bootcamp.";
+                setError(message);
+                toast.error(message);
+              }
+            }}
+            type="button"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ), { duration: 8000 });
   };
 
   const filteredBootcamps = useMemo(() => {
@@ -238,7 +281,7 @@ function AdminBootcamps() {
                             Edit
                           </AdminButton>
                           <AdminButton className="rounded-full px-4" onClick={() => onArchiveToggle(item)} variant="secondary">
-                            {item?.isActive === false ? "Activate" : "Archive"}
+                            {item?.isActive === false ? "Unarchive" : "Archive"}
                           </AdminButton>
                           <AdminButton className="rounded-full px-4" onClick={() => onDelete(item)} variant="danger">
                             Delete
