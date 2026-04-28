@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../shared/components/admin/AdminLayout";
 import { AdminButton, AdminInput } from "../../shared/components/admin/AdminUI";
 import { adminService } from "../../services/adminService";
+import toast from "react-hot-toast";
 
 function asList(value) {
   if (Array.isArray(value)) return value;
@@ -57,22 +58,29 @@ function AdminDivisions() {
     try {
       if (editId) {
         await adminService.updateDivision(editId, { name: name.trim(), description: description.trim() });
+        toast.success("Division updated successfully.");
       } else {
         await adminService.createDivision({ name: name.trim(), description: description.trim() });
+        toast.success("Division created successfully.");
       }
       setDrawerOpen(false);
       await load();
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Failed to save division.");
+      const message = err?.response?.data?.message || err?.message || "Failed to save division.";
+      setError(message);
+      toast.error(message);
     }
   };
 
   const onDelete = async (id) => {
     try {
       await adminService.deleteDivision(id);
+      toast.success("Division deleted successfully.");
       await load();
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Failed to delete division.");
+      const message = err?.response?.data?.message || err?.message || "Failed to delete division.";
+      setError(message);
+      toast.error(message);
     }
   };
 
