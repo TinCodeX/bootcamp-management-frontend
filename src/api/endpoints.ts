@@ -18,13 +18,16 @@ export const ENDPOINTS = {
     DETAIL: (id: string) => `/bootcamps/sessions/${id}`,
   },
   DIVISIONS: {
-    BASE: '/divisions',
-    DETAIL: (id: string) => `/divisions/${id}`,
-    BOOTCAMPS: (id: string) => `/divisions/${id}/bootcamps`,
+    BASE: '/admin/divisions',
+    DETAIL: (id: string) => `/admin/divisions/${id}`,
+    STATISTICS: (id: string) => `/admin/divisions/${id}/statistics`,
+    BOOTCAMPS: (id: string) => `/admin/divisions/${id}/bootcamps`,
   },
   BOOTCAMPS: {
     BASE: '/admin/bootcamps',
     DETAIL: (id: string) => `/admin/bootcamps/${id}`,
+    DEACTIVATE: (id: string) => `/admin/bootcamps/${id}/deactivate`,
+    ASSIGN_LEAD: (id: string) => `/admin/bootcamps/${id}/assign-lead`,
     RESOURCES: (bootcampId: string) => `/bootcamps/${bootcampId}/resources`,
     RESOURCE_DETAIL: (bootcampId: string, resourceId: string) => `/bootcamps/${bootcampId}/resources/${resourceId}`,
     RESOURCE_DOWNLOAD: (bootcampId: string, resourceId: string) => `/bootcamps/${bootcampId}/resources/${resourceId}/download`,
@@ -40,5 +43,8 @@ export const ENDPOINTS = {
     TASKS: '/student/tasks',
     TASK_DETAIL: (taskId: string) => `/student/tasks/${taskId}`,
     TASK_SUBMIT: (taskId: string) => `/student/tasks/${taskId}/submit`,
+  },
+  SETTINGS: {
+    BASE: '/admin/settings',
   },
 } as const;
