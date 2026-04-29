@@ -1,3 +1,4 @@
+import { createSession } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 import { ENDPOINTS } from "../api/endpoints";
 
@@ -56,12 +57,20 @@ export const adminService = {
   deactivateBootcamp: (id: string) => withData(axiosInstance.patch(ENDPOINTS.BOOTCAMPS.DEACTIVATE(id))),
   assignBootcampLead: (id: string, instructorId: string) => 
     withData(axiosInstance.patch(ENDPOINTS.BOOTCAMPS.ASSIGN_LEAD(id), { instructorId })),
+  getBootcampById: (id: string) => withData(axiosInstance.get(ENDPOINTS.BOOTCAMPS.DETAIL(id))),
 
   getUsers: (params: AdminQuery = {}) => withData(axiosInstance.get(ENDPOINTS.USERS.BASE, { params })),
   createUser: (payload: UserPayload) => withData(axiosInstance.post(ENDPOINTS.USERS.BASE, payload)),
   updateUser: (id: string, payload: Partial<UserPayload>) => withData(axiosInstance.put(ENDPOINTS.USERS.DETAIL(id), payload)),
   toggleUserStatus: (id: string, isActive: boolean) => withData(axiosInstance.patch(ENDPOINTS.USERS.STATUS(id), { isActive })),
+  getUserById: (id: string) => withData(axiosInstance.get(ENDPOINTS.USERS.DETAIL(id))),
 
   getSettings: () => withData(axiosInstance.get(ENDPOINTS.SETTINGS.BASE)),
   updateSettings: (payload: SettingsPayload) => withData(axiosInstance.put(ENDPOINTS.SETTINGS.BASE, payload)),
+
+  getSessions: (bootcampId: string) => withData(axiosInstance.get(ENDPOINTS.SESSIONS.BASE(bootcampId))),
+  getSessionById: (bootcampId: string, sessionId: string) => withData(axiosInstance.get(ENDPOINTS.SESSIONS.DETAIL(bootcampId, sessionId))),
+  
+  getResources: (bootcampId: string) => withData(axiosInstance.get(ENDPOINTS.RESOURCES.BASE(bootcampId))),
+  getResourceById: (bootcampId: string, resourceId: string) => withData(axiosInstance.get(ENDPOINTS.RESOURCES.DETAIL(bootcampId, resourceId))),
 };

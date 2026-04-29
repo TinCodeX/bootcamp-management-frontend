@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import AdminLayout from "../../shared/components/admin/AdminLayout";
 import { AdminButton, AdminInput, AdminSelect } from "../../shared/components/admin/AdminUI";
 import { adminService } from "../../services/adminService";
+import SearchableUserDropdown from "../../shared/components/admin/SearchableUserDropdown";
 
 function asList(value) {
   if (Array.isArray(value)) return value;
@@ -43,7 +44,8 @@ function AdminBootcamps() {
       setDivisions(divisionItems);
       
       const allUsers = asList(usersRes);
-      setInstructors(allUsers.filter(u => String(u?.role || "").toLowerCase() === "instructor"));
+      // setInstructors(allUsers.filter(u => String(u?.role || "").toLowerCase() === "instructor"));
+      setInstructors(allUsers); 
 
       if (!divisionId && divisionItems[0]?._id) setDivisionId(divisionItems[0]._id);
     } catch (err) {
@@ -214,7 +216,12 @@ function AdminBootcamps() {
                   return (
                     <tr className="transition-colors hover:bg-surface-container-low/30" key={id}>
                       <td className="p-4 pl-6 align-middle">
-                        <p className="font-bold text-base">{item?.name || "Unnamed Bootcamp"}</p>
+                        <a
+                          href={`/admin/bootcamps/${id}`}
+                          className="font-bold text-base text-primary hover:underline cursor-pointer"
+                        >
+                          {item?.name || "Unnamed Bootcamp"}
+                        </a>
                         <p className="text-xs text-on-surface-variant mt-1 line-clamp-1 max-w-sm">{item?.description || "No description"}</p>
                       </td>
                       <td className="p-4 align-middle text-on-surface-variant font-medium">
@@ -234,13 +241,13 @@ function AdminBootcamps() {
                       </td>
                       <td className="p-4 pr-6 align-middle">
                         <div className="flex justify-end gap-2">
-                          <AdminButton className="rounded-full px-4" onClick={() => openEdit(item)} variant="ghost">
+                          <AdminButton className="rounded-full px-4 py-2 text-xs border border-vanguard-gray-200 bg-white text-vanguard-gray-500 hover:bg-vanguard-gray-50" onClick={() => openEdit(item)} variant="ghost">
                             Edit
                           </AdminButton>
-                          <AdminButton className="rounded-full px-4" onClick={() => onArchiveToggle(item)} variant="secondary">
+                          <AdminButton className="rounded-full px-4 py-2 text-xs border border-vanguard-gray-200 bg-white text-vanguard-gray-500 hover:bg-vanguard-gray-50" onClick={() => onArchiveToggle(item)} variant="ghost">
                             {item?.isActive === false ? "Activate" : "Archive"}
                           </AdminButton>
-                          <AdminButton className="rounded-full px-4" onClick={() => onDelete(item)} variant="danger">
+                          <AdminButton className="rounded-full px-4 py-2 text-xs border border-vanguard-gray-200 bg-white text-error hover:bg-error/10" onClick={() => onDelete(item)} variant="ghost">
                             Delete
                           </AdminButton>
                         </div>
@@ -289,14 +296,18 @@ function AdminBootcamps() {
               <div>
                 <label className="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Lead Instructor</label>
                 <div className="mt-2">
-                  <AdminSelect onChange={(e) => setLeadInstructorId(e.target.value)} value={leadInstructorId}>
+                  {/* <AdminSelect onChange={(e) => setLeadInstructorId(e.target.value)} value={leadInstructorId}>
                     <option value="">Select an instructor (optional)</option>
                     {instructors.map((inst) => (
                       <option key={inst?._id || inst?.id} value={inst?._id || inst?.id}>
                         {inst?.firstName} {inst?.lastName} (@{inst?.username})
                       </option>
                     ))}
-                  </AdminSelect>
+                  </AdminSelect> */}
+                  <SearchableUserDropdown
+                    value={leadInstructorId}
+                    onChange={setLeadInstructorId}
+                  />
                 </div>
               </div>
               <div>

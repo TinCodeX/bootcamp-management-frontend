@@ -102,9 +102,9 @@ function AdminDivisionDetails() {
   }
 
   const statItems = [
-    { label: "Total Bootcamps", value: statistics?.totalBootcamps || 0 },
-    { label: "Active Students", value: statistics?.activeStudents || 0 },
-    { label: "Total Instructors", value: statistics?.totalInstructors || 0 },
+    { label: "Total Bootcamps", value: statistics?.bootcampCount || 0 },
+    { label: "Active Students", value: statistics?.studentCount || 0 },
+    { label: "Total Instructors", value: statistics?.leadInstructorCount || 0 },
   ];
 
   return (

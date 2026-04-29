@@ -14,8 +14,12 @@ export const ENDPOINTS = {
     STATUS: (id: string) => `/admin/users/${id}/status`,
   },
   SESSIONS: {
-    BASE: '/bootcamps/sessions',
-    DETAIL: (id: string) => `/bootcamps/sessions/${id}`,
+    BASE: (bootcampId: string) => `/bootcamps/${bootcampId}/sessions`,
+    DETAIL: (bootcampId: string, sessionId: string) => `/bootcamps/${bootcampId}/sessions/${sessionId}`,
+    CREATE: (bootcampId: string) => `/bootcamps/${bootcampId}/sessions`,
+    UPDATE: (bootcampId: string, sessionId: string) => `/bootcamps/${bootcampId}/sessions/${sessionId}`,
+    DELETE: (bootcampId: string, sessionId: string) => `/bootcamps/${bootcampId}/sessions/${sessionId}`,
+    CANCEL: (bootcampId: string, sessionId: string) => `/bootcamps/${bootcampId}/sessions/${sessionId}/cancel`,
   },
   DIVISIONS: {
     BASE: '/admin/divisions',
@@ -47,4 +51,10 @@ export const ENDPOINTS = {
   SETTINGS: {
     BASE: '/admin/settings',
   },
+  RESOURCES: {
+    BASE: (bootcampId: string) => `/bootcamps/${bootcampId}/resources`,
+    DETAIL: (bootcampId: string, resourceId: string) => `/bootcamps/${bootcampId}/resources/${resourceId}`,
+    DOWNLOAD: (bootcampId: string, resourceId: string) => `/bootcamps/${bootcampId}/resources/${resourceId}/download`,
+    
+  }
 } as const;

@@ -29,6 +29,12 @@ import AdminDivisionDetails from "./features/admin/AdminDivisionDetails";
 import AdminBootcamps from "./features/admin/AdminBootcamps";
 import AdminUsers from "./features/admin/AdminUsers";
 import AdminProfile from "./features/admin/AdminProfile";
+import BootcampDetailPage from "./features/admin/BootcampDetailPage";
+import BootcampSessions from "./features/bootcamps/tabs/BootcampSessions";
+import BootcampResources from "./features/bootcamps/tabs/BootcampResources";
+import BootcampGroups from "./features/bootcamps/tabs/BootcampGroups";
+import SessionDetailPage from "./features/sessions/SessionDetailPage";
+import ResourceDetailPage from "./features/resources/ResourceDetailPage";
 
 function App() {
   return (
@@ -68,6 +74,15 @@ function App() {
         <Route path="/admin/divisions" element={<AdminDivisions />} />
         <Route path="/admin/divisions/:id" element={<AdminDivisionDetails />} />
         <Route path="/admin/bootcamps" element={<AdminBootcamps />} />
+        <Route path="/admin/bootcamps/:id" element={<BootcampDetailPage />}>
+          <Route index element={<Navigate to="sessions" replace />} />
+          <Route path="sessions" element={<BootcampSessions />} />
+          <Route path="resources" element={<BootcampResources />} />
+          <Route path="group" element={<BootcampGroups />} />
+        </Route>
+        {/* Standalone Resource Detail Route */}
+        <Route path="/admin/bootcamps/:id/resources/:resourceId" element={<ResourceDetailPage />} />
+        <Route path="/admin/bootcamps/:id/sessions/:sessionId" element={<SessionDetailPage />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
 
