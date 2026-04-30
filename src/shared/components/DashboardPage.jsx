@@ -29,7 +29,7 @@ const DashboardPage = () => {
       ]);
       setPendingFeedback(Array.isArray(feedback) ? feedback : []);
       setSubmissions(Array.isArray(subs) ? subs : []);
-      setTasksList(Array.isArray(tks) ? tks : []);
+      setTasksList(Array.isArray(tks.tasks) ? tks.tasks : []);
     } catch (err) {
       console.error('Failed to load dashboard data', err);
     } finally {

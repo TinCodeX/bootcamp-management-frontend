@@ -66,10 +66,23 @@ function AdminUsers() {
     }
   };
 
+  // Handler to change user role
+  const onChangeRole = async (user, newRole) => {
+    const id = user?._id || user?.id;
+    if (!id || !["Admin", "Student"].includes(newRole)) return;
+    try {
+      await adminService.updateUser(id, { role: newRole });
+      toast.success(`Role updated to ${newRole} successfully!`);
+      await load();
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.message || "Failed to update user role.");
+    }
+  };
+
   return (
     <AdminLayout title="User Management" subtitle="Create users, manage roles, and control account status.">
       <div className="space-y-8">
-        <section className="relative overflow-hidden rounded-3xl border border-outline-variant/20 bg-gradient-to-br from-surface-container-low/80 to-surface/40 backdrop-blur-2xl p-8 shadow-xl">
+        <section className="relative overflow-hidden rounded-3xl border border-outline-variant/20 bg-linear-to-br from-surface-container-low/80 to-surface/40 backdrop-blur-2xl p-8 shadow-xl">
           <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-tertiary/10 rounded-full blur-3xl -z-10 pointer-events-none" />
           <p className="text-xs uppercase tracking-[0.2em] text-tertiary font-bold">Admin Hub</p>
           <h2 className="text-4xl font-black mt-2 tracking-tight">Member Directory</h2>
@@ -83,9 +96,9 @@ function AdminUsers() {
               <AdminInput className="md:col-span-1" onChange={(e) => setField("lastName", e.target.value)} placeholder="Last Name" value={form.lastName} />
               <AdminInput className="md:col-span-1" onChange={(e) => setField("username", e.target.value)} placeholder="Username" value={form.username} />
               <AdminInput className="md:col-span-2" onChange={(e) => setField("email", e.target.value)} placeholder="Email Address" type="email" value={form.email} />
+              <AdminInput className="md:col-span-2" onChange={(e) => setField("division", e.target.value)} placeholder="Division" value={form.divisions} />
               <AdminSelect className="md:col-span-1" onChange={(e) => setField("role", e.target.value)} value={form.role}>
                 <option value="Student">Student</option>
-                <option value="Instructor">Instructor</option>
                 <option value="Admin">Admin</option>
               </AdminSelect>
             </div>
@@ -103,7 +116,6 @@ function AdminUsers() {
             <AdminSelect onChange={(e) => setRoleFilter(e.target.value)} value={roleFilter}>
               <option value="all">All Roles</option>
               <option value="student">Student</option>
-              <option value="instructor">Instructor</option>
               <option value="admin">Admin</option>
             </AdminSelect>
           </div>
@@ -119,7 +131,7 @@ function AdminUsers() {
               .map((user) => (
                 <article className="group flex flex-col md:flex-row md:items-center justify-between rounded-2xl border border-outline-variant/20 bg-surface/60 backdrop-blur-sm p-5 transition-all duration-300 hover:bg-surface hover:shadow-md hover:-translate-y-0.5 hover:border-primary/20 gap-4" key={user?._id || user?.id}>
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-tertiary/20 flex items-center justify-center text-primary font-bold text-lg">
+                    <div className="h-12 w-12 rounded-full bg-linear-to-br from-primary/20 to-tertiary/20 flex items-center justify-center text-primary font-bold text-lg">
                       {String(user?.firstName || "U")[0].toUpperCase()}
                     </div>
                     <div>
@@ -138,9 +150,20 @@ function AdminUsers() {
                       </div>
                     </div>
                   </div>
-                  <AdminButton className="rounded-full px-6 shadow-sm w-full md:w-auto" onClick={() => onToggle(user)} variant={user?.isActive === false ? "primary" : "ghost"}>
-                    {user?.isActive === false ? "Activate Account" : "Deactivate"}
-                  </AdminButton>
+                  <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto items-center">
+                    <AdminButton className="rounded-full px-6 shadow-sm w-full md:w-auto" onClick={() => onToggle(user)} variant={user?.isActive === false ? "primary" : "ghost"}>
+                      {user?.isActive === false ? "Activate Account" : "Deactivate"}
+                    </AdminButton>
+                    <AdminSelect
+                      className="rounded-full px-4 py-2 border border-outline-variant/30 bg-surface/80 text-sm font-semibold w-full md:w-auto"
+                      value={user?.role || "Student"}
+                      onChange={e => onChangeRole(user, e.target.value)}
+                      style={{ minWidth: 120 }}
+                    >
+                      <option value="Student">Student</option>
+                      <option value="Admin">Admin</option>
+                    </AdminSelect>
+                  </div>
                 </article>
               ))}
             {users.length === 0 ? <p className="p-8 text-center text-sm text-on-surface-variant font-medium">No users found.</p> : null}

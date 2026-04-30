@@ -47,6 +47,7 @@ export const ENDPOINTS = {
     TASKS: '/student/tasks',
     TASK_DETAIL: (taskId: string) => `/student/tasks/${taskId}`,
     TASK_SUBMIT: (taskId: string) => `/student/tasks/${taskId}/submit`,
+    BOOTCAMPS: '/bootcamps',
   },
   SETTINGS: {
     BASE: '/admin/settings',

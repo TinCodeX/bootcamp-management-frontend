@@ -21,8 +21,8 @@ const StudentAssignmentsPage = () => {
         studentService.getSubmissions(),
         studentService.getTasks()
       ]);
-      setSubmissions(subsData || []);
-      setTasks(tasksData || []);
+      setSubmissions(subsData.submissions || []);
+      setTasks(tasksData.tasks || []);
     } catch (err) {
       console.error('Failed to load page data', err);
       setError('Could not load assignments and tasks.');

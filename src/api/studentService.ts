@@ -120,5 +120,15 @@ export const studentService = {
       }
     });
     return response.data;
+  },
+
+  getBootcamps: async () => {
+    const response = await axiosInstance.get(ENDPOINTS.STUDENT.BOOTCAMPS);
+    return response.data;
+  },
+
+  getSessions: async (bootcampId: string) => {
+    const response = await axiosInstance.get(ENDPOINTS.SESSIONS.BASE(bootcampId));
+    return response.data;
   }
 };

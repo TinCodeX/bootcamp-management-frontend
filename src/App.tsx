@@ -1,3 +1,5 @@
+import StudentBootcampDetail from "./features/student/pages/StudentBootcampDetail";
+import StudentBootcampSessions from "./features/student/pages/StudentBootcampSessions";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import StudentLogin from "./features/student/StudentLogin";
 import StudentForgotPassword from "./features/student/StudentForgotPassword";
@@ -93,6 +95,13 @@ function App() {
         <Route path="/assignments" element={<Navigate to="/student/assignments" replace />} />
         <Route path="/resources" element={<Navigate to="/student/resources" replace />} />
         <Route path="/attendance" element={<Navigate to="/student/attendance" replace />} />
+        {/* Student Bootcamp Workspace */}
+        <Route path="/portal/bootcamps/:id" element={<StudentBootcampDetail />}>
+          <Route index element={<Navigate to="sessions" replace />} />
+          <Route path="sessions" element={<StudentBootcampSessions />} />
+          <Route path="resources" element={<div className="p-8 text-xl font-bold">Learning Materials (Resources) Tab</div>} />
+          <Route path="assignments" element={<div className="p-8 text-xl font-bold">My Tasks (Assignments) Tab</div>} />
+        </Route>
       </Routes>
     </Router>
   );

@@ -61,7 +61,7 @@ export const adminService = {
 
   getUsers: (params: AdminQuery = {}) => withData(axiosInstance.get(ENDPOINTS.USERS.BASE, { params })),
   createUser: (payload: UserPayload) => withData(axiosInstance.post(ENDPOINTS.USERS.BASE, payload)),
-  updateUser: (id: string, payload: Partial<UserPayload>) => withData(axiosInstance.put(ENDPOINTS.USERS.DETAIL(id), payload)),
+  updateUser: (id: string, payload: Partial<UserPayload>) => withData(axiosInstance.patch(ENDPOINTS.USERS.DETAIL(id), payload)),
   toggleUserStatus: (id: string, isActive: boolean) => withData(axiosInstance.patch(ENDPOINTS.USERS.STATUS(id), { isActive })),
   getUserById: (id: string) => withData(axiosInstance.get(ENDPOINTS.USERS.DETAIL(id))),
 
